@@ -1,0 +1,11 @@
+[package]
+name = "cellular-automata"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+libm = "0.2.8"
+macroquad = "0.4.5"
+quad-gl = "0.2.13"
+rand = "0.8.5"
+rayon = "1.10.0"
