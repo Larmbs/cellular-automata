@@ -1,18 +1,12 @@
-mod grid;
-use macroquad::prelude::*;
 
-#[macroquad::main("Grid Example")]
-async fn main() {
-    let mut grid = grid::Grid::new(200, 150, 800, 600);
-    grid.gen_random(300);
+// Model responsible for running sim
+mod automata;
+// Helps display the sim
+mod display;
 
-    loop {
-        clear_background(BLACK);
 
-        grid.update();
-
-        grid.display();
-
-        next_frame().await;
-    }
+fn main() {
+    let grid = automata::CellularGrid::new_with_noise(200, 150);
+    let mut display = display::Window::new(600, 400, grid, String::from("Sim"));
+    display.run();
 }
