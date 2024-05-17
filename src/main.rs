@@ -1,6 +1,8 @@
 
 // Model responsible for running sim
 mod automata;
+// Brains of sim
+mod network;
 // Helps display the sim
 mod display;
 
