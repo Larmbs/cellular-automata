@@ -82,8 +82,7 @@ pub fn train<B: Backend>(config: TrainingConfig, device: &B::Device) {
     let mut optimizer = AdamConfig::new();
 
     // Initializing sim
-    let mut sim = CellularGrid::new(width, height);
-    sim.set_xy(width/2, height/2, Cell::new_ones());
+    let mut sim = CellularGrid::new_with_seed(width, height);
 
     // Main loop
     for i in 0..config.max_steps {
@@ -111,8 +110,7 @@ pub fn train<B: Backend>(config: TrainingConfig, device: &B::Device) {
 
         // Checking if sim has died
         if sim.has_died() {
-            sim = CellularGrid::new(width, height);
-            sim.set_xy(width/2, height/2, Cell::new_ones());
+            sim = CellularGrid::new_with_seed(width, height);
 
             println!("Sim has died")
         }

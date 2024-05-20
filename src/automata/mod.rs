@@ -24,6 +24,18 @@ impl CellularGrid {
         }
     }
 
+    /// Creates new grid but with a single 1 cell in the middle
+    pub fn new_with_seed(width: usize, height: usize) -> Self {
+        let mut grid = Self {
+            width,
+            height,
+            grid: vec![Cell::new()]
+        };
+        grid.set_xy(width/2, height/2, Cell::new_ones());
+
+        grid
+    }
+
     /// Creates a grid full of noise
     pub fn new_with_noise(width: usize, height: usize) -> Self {
         let mut grid = Vec::with_capacity(width*height);
