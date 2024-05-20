@@ -2,6 +2,7 @@
 //! Module to help calculate the loss the loss between the 
 //! result values and the target ones
 //! 
+#![allow(unused)]
 
 use crate::automata::Cell;
 

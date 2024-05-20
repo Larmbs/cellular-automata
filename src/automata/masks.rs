@@ -2,7 +2,7 @@
 //! An array of masks to help isolate the correct cells and to add 
 //! weights to their values
 //! 
-#[allow(unused)]
+#![allow(unused)]
 
 
 /// Mask that isolates the working cell

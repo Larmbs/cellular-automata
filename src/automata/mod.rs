@@ -1,3 +1,9 @@
+//!
+//! Module that represents game full of cells
+//! 
+#![allow(unused)]
+
+
 // Modules
 mod masks;
 mod cell;

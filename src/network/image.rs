@@ -1,6 +1,8 @@
 //!
 //! Image fetching and parsing module to properly retrieve data
 //! 
+#![allow(unused)]
+
 
 // Importing image
 use image::{

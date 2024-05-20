@@ -2,6 +2,7 @@
 //! Module to train our ai by running the simulation 
 //! and calculating losses for back propagation
 //! 
+#![allow(unused)]
 
 // Importing model
 use super::{

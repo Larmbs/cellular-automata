@@ -1,6 +1,7 @@
 //!
 //! Defines the neural network used
 //! 
+#![allow(unused)]
 
 use burn::{
     nn::{
