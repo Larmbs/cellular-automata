@@ -18,7 +18,7 @@ impl CellularGrid {
         Self {
             width,
             height,
-            grid: vec![Cell::new(0., 1.)]
+            grid: vec![Cell::new()]
         }
     }
 
@@ -27,9 +27,8 @@ impl CellularGrid {
         let mut grid = Vec::with_capacity(width*height);
 
         // Populate grid with random cells
-        let mut rng = rand::thread_rng();
         for _ in 0..width*height {
-            grid.push(Cell::new(rng.gen(), rng.gen()))
+            grid.push(Cell::new_rand())
         }
 
         Self {
@@ -61,15 +60,15 @@ impl CellularGrid {
     /// Updates grid based off conditions
     pub fn update(&mut self) {
         // Creating the result grid that will overwrite the previous one
-        let mut new_grid = vec![Cell::new(0., 0.); self.grid.len()];
+        let mut new_grid = vec![Cell::new(); self.grid.len()];
 
         for (index, cell) in self.grid.iter().enumerate() {
             let x = index % self.width;
             let y = index / self.width;
 
             // Using Sobel masks to get x and y partial derivatives
-            let mut sum_sobel_x = Cell::new(0., 0.);
-            let mut sum_soble_y = Cell::new(0., 0.);
+            let mut sum_sobel_x = Cell::new();
+            let mut sum_sobel_y = Cell::new();
             for mx in -1..=1 {
                 for my in -1..=1 {
                     // p stands for pointer as we point to each neighbor cell
@@ -77,13 +76,19 @@ impl CellularGrid {
                     let pcell = &self.grid[px + py * self.width];
 
                     // add to cumulative sum
-                    sum_sobel_x.alpha += pcell.alpha * masks::SOBEL_X[(my + 1) as usize][(mx + 1) as usize] as f64;
-                    sum_soble_y.value += pcell.value * masks::SOBEL_Y[(my + 1) as usize][(mx + 1) as usize] as f64;
+                    let sobel_val_x = masks::SOBEL_X[(my + 1) as usize][(mx + 1) as usize] as f32;
+                    let sobel_val_y = masks::SOBEL_Y[(my + 1) as usize][(mx + 1) as usize] as f32;
+
+                    // Adding pointed cells values to sum
+                    for i in 0..pcell.channels.len() {
+                        sum_sobel_x.channels[i] += pcell.channels[i] * sobel_val_x;
+                        sum_sobel_y.channels[i] += pcell.channels[i] * sobel_val_y;
+                    }
                 }
             }
 
             // Using neural network to choose value for cell based off params
-            new_grid[index] = network::network(cell, &sum_sobel_x, &sum_soble_y);
+            new_grid[index] = network::network(cell, &sum_sobel_x, &sum_sobel_y);
         }
         
         // Overwriting previous grid

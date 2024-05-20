@@ -1,20 +1,33 @@
+use rand::{self, Rng};
+
 
 /// Represents a cell in grid
 #[derive(Clone, Debug)]
 pub struct Cell {
-    // Determines how dead or alive a cell is
-    // If cell has alpha > 0.1 then it is alive
-    // Neighbors to this cell will be called growing
-    pub alpha: f64,
-    // Represents a channel in which the cells can communicate
-    pub value: f64,
+    pub channels: [f32; 4],
 }
 
 impl Cell {
-    pub fn new(alpha: f64, value: f64) -> Self {
+    pub fn new() -> Self {
         Self {
-            alpha,
-            value,
+            channels: [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+            ]
+        }
+    }
+
+    pub fn new_rand() -> Self {
+        let mut rng = rand::thread_rng();
+        Self {
+            channels:[
+                rng.gen::<f32>(),
+                rng.gen::<f32>(),
+                rng.gen::<f32>(),
+                rng.gen::<f32>(),
+            ]
         }
     }
 }
