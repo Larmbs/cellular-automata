@@ -60,7 +60,7 @@ impl Window {
                 let grid = self.sim.grid_as_ref();
                 for x in 0..size_x {
                     for y in 0..size_y {
-                        let color = grid[y * size_x + x].alpha as f32;
+                        let color = grid[y * size_x + x].channels[0] as f32;
                         rectangle(
                             [color, color, color, 1.],
                             [x as f64 * self.cell_width as f64, y as f64 * self.cell_height as f64, self.cell_width as f64, self.cell_height as f64],

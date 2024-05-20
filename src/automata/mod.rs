@@ -1,10 +1,12 @@
-
+// Modules
 mod masks;
 mod cell;
-mod network;
 pub use cell::Cell;
-use rand::Rng;
 
+// Importing the network
+use crate::network;
+
+/// Represents a grid of cells
 pub struct CellularGrid {
     width: usize,
     height: usize,

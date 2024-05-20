@@ -1,4 +1,9 @@
+//! 
+//! An array of masks to help isolate the correct cells and to add 
+//! weights to their values
+//! 
 #[allow(unused)]
+
 
 /// Mask that isolates the working cell
 pub const SELF_MASK: [[i8; 3]; 3] = [
