@@ -61,9 +61,9 @@ pub struct Model<B: Backend> {
 #[derive(Config, Debug)]
 /// Represents the model configuration
 pub struct ModelConfig {
-    input_size: usize,
-    hidden_size: usize,
-    output_size: usize,
+    pub input_size: usize,
+    pub hidden_size: usize,
+    pub output_size: usize,
 }impl ModelConfig {
     /// Returns the initialized model.
     pub fn init<B: Backend>(&self, device: &B::Device) -> Model<B> {

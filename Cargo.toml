@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 burn = { version = "0.13.2", features = ["wgpu"] }
+image = "0.25.1"
 libm = "0.2.8"
 piston_window = "0.131.0"
 rand = "0.8.5"

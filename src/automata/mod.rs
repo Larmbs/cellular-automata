@@ -15,7 +15,7 @@ pub struct CellularGrid {
 
 #[allow(unused)]
 impl CellularGrid {
-    /// Returns a grid
+    /// Returns a grid of cells full of zero
     pub fn new(width: usize, height: usize) -> Self {
         Self {
             width,
