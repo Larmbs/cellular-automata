@@ -45,6 +45,22 @@ impl CellularGrid {
         &self.grid
     }
 
+    /// Returns wheter the sim has dies
+    pub fn has_died(&self) -> bool {
+        for i in 0..self.width*self.height {
+            if self.grid[i].channels[0] >= 0.05 {
+                return true;
+            }
+        }
+        true
+    }
+
+    /// Sets x y value to somthing
+    pub fn set_xy(&mut self, x: usize, y: usize, cell: Cell) {
+        let (x, y) = self.wrap_xy(x as i32, y as i32);
+        self.grid[y * self.width + x] = cell;
+    }
+
     /// Returns grid size
     pub fn size(&self) -> (usize, usize) {
         (self.width, self.height)
@@ -60,7 +76,7 @@ impl CellularGrid {
     
 impl CellularGrid {
     /// Updates grid based off conditions
-    pub fn update(&mut self) {
+    pub fn update<F: Fn(&Cell, &Cell, &Cell) -> Cell>(&mut self, func: F) {
         // Creating the result grid that will overwrite the previous one
         let mut new_grid = vec![Cell::new(); self.grid.len()];
 
@@ -90,7 +106,7 @@ impl CellularGrid {
             }
 
             // Using neural network to choose value for cell based off params
-            new_grid[index] = network::network(cell, &sum_sobel_x, &sum_sobel_y);
+            new_grid[index] = func(cell, &sum_sobel_x, &sum_sobel_y);
         }
         
         // Overwriting previous grid

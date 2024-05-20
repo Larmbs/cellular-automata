@@ -4,9 +4,18 @@
 //! 
 
 // Importing model
-use super::model::{
-    Model,
-    ModelConfig,
+use super::{
+    model::{
+        Model,
+        ModelConfig,
+        prepare_data_for_input,
+        output_data_to_cell,
+    },
+    loss::{
+        compare_images_for_accuracy,
+        compare_images_for_loss,
+    },
+    image::get_image_of_floats,
 };
 
 // Importing game
@@ -17,18 +26,14 @@ use crate::automata::{
 
 // Importing burn
 use burn::{
-    optim::{
-        AdamConfig,
-        Adam,
-    },
-    prelude::*,
+    nn::loss::CrossEntropyLoss, optim::{
+        Adam, AdamConfig
+    }, prelude::*, record::CompactRecorder
 };
 
 // Importing rng modules
 use rand::SeedableRng;
 use rand::rngs::StdRng;
-use std::sync::Arc;
-
 
 /* Training */
 
@@ -61,7 +66,10 @@ use std::sync::Arc;
 /// Function to train the network while playing it
 pub fn train<B: Backend>(config: TrainingConfig, device: &B::Device) {
     // Setting random seed
-    let mut rng = StdRng::seed_from_u64(config.seed);
+    B::seed(config.seed);
+
+    let target_image_path = "data/images/whale.png";
+    let (target_image, (width, height)) = get_image_of_floats(&target_image_path).expect("Path provided was invalid");
 
     // Creating the model
     let model: Model<B> = ModelConfig {
@@ -74,13 +82,45 @@ pub fn train<B: Backend>(config: TrainingConfig, device: &B::Device) {
     let mut optimizer = AdamConfig::new();
 
     // Initializing sim
-    let mut sim = CellularGrid::new(20, 20);
+    let mut sim = CellularGrid::new(width, height);
+    sim.set_xy(width/2, height/2, Cell::new_ones());
 
+    // Main loop
     for i in 0..config.max_steps {
-        for j in 0..config.step_size {
-            sim.update()
+        // Step n steps
+        for _ in 0..config.step_size {
+            sim.update(|cell1, cell2, cell3| {
+                let tensor = prepare_data_for_input(cell1, cell2, cell3, device);
+                let output = model.forward(tensor);
+                output_data_to_cell(output)
+            })
+        }
+
+        // Getting current grid state
+        let output = sim.grid_as_ref();
+        
+        let accuracy = compare_images_for_accuracy(output, &target_image);
+
+        // Calculate the loss
+        let loss = compare_images_for_loss(sim.grid_as_ref(), &target_image);
+
+        
+        ///model = optimizer.step(config.learning_rate, model, grads);
+
+        println!("Epoch: {} Loss: {} Accur: {}", i, loss, accuracy);
+
+        // Checking if sim has died
+        if sim.has_died() {
+            sim = CellularGrid::new(width, height);
+            sim.set_xy(width/2, height/2, Cell::new_ones());
+
+            println!("Sim has died")
         }
     }
+
+    model
+        .save_file("models/model1", &CompactRecorder::new())
+        .expect("Trained model should be saved")
 }
 
 

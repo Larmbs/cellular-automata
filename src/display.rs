@@ -50,7 +50,7 @@ impl Window {
         let (size_x, size_y) = self.sim.size();
 
         while let Some(e) = window.next() {
-            self.sim.update();
+            //self.sim.update();
 
             window.draw_2d(&e, |c, g, _device| {
                 // Clear screen

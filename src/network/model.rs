@@ -79,7 +79,7 @@ pub struct ModelConfig {
 /* Helper functions to properly deal with data */
 
 /// Helps to convert the cell object to the appropriate format
-pub fn prepare_data<B: Backend>(identity_cell: &Cell, sobel_x_cell: &Cell, sobel_y_cell: &Cell, device: &B::Device) -> Tensor<B, 1> {
+pub fn prepare_data_for_input<B: Backend>(identity_cell: &Cell, sobel_x_cell: &Cell, sobel_y_cell: &Cell, device: &B::Device) -> Tensor<B, 1> {
     let len = identity_cell.channels.len();
 
     // Combining data into one array
@@ -95,4 +95,18 @@ pub fn prepare_data<B: Backend>(identity_cell: &Cell, sobel_x_cell: &Cell, sobel
     let tensor = Tensor::<B, 1>::from_floats(data, device);
 
     tensor
+}
+
+/// Helps convert tensor output object to cell
+pub fn output_data_to_cell<B: Backend>(tensor: Tensor<B, 1>) -> Cell {
+    let mut iter = tensor.into_data().convert::<f32>().value.into_iter();
+
+    Cell {
+        channels: [
+            iter.next().unwrap(),
+            iter.next().unwrap(),
+            iter.next().unwrap(),
+            iter.next().unwrap(),
+        ]
+    }
 }
